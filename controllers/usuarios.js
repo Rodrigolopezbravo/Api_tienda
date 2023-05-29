@@ -7,9 +7,18 @@ const app = express();
 module.exports.buscar_todo = app.get('/', (request, response) => {  
     const sql = `
     SELECT 
-        ID_usuario, nombre, apellido
+        id_usuario,
+        rut_usuario,
+        primer_nombre, 
+        segundo_nombre, 
+        apellido_paterno, 
+        apellido_materno,
+        fecha_nacimiento,
+        correo_electronico,
+        esta_subscrito,
+        direccion,
+        telefono
     FROM Usuarios 
-    WHERE ID_usuario = 1
     `;
     connection.query(sql, (error, results) => {
         if (error) throw error;
@@ -22,44 +31,76 @@ module.exports.buscar_todo = app.get('/', (request, response) => {
 });
 
 module.exports.actualizar = app.patch('/', (req, res) => {
-    const { id, nombre } = req.body;
+    const { id_usuario,rut_usuario , primer_nombre, segundo_nombre, apellido_paterno, apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono } = req.body;
     const sql = `
     UPDATE Usuarios 
-    SET ID_usuario = 2 , nombre = "Rodrigo" , apellido = "Lopez bravo"
-    WHERE id_usuario = 1`;
-    const values = [nombre, id];
+    SET 
+        rut_usuario = ?,
+        primer_nombre = ?,
+        segundo_nombre = ?,
+        apellido_paterno = ?,
+        apellido_materno = ?,
+        fecha_nacimiento = ?,
+        correo_electronico = ?,
+        esta_subscrito = ?,
+        direccion = ?,
+        telefono = ?
+    WHERE id_usuario = ?`;
+    const values = [rut_usuario, primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono,id_usuario];
 
     connection.query(sql, values, (error, results) => {
         if (error) throw error;
-        res.send(`Usuario con id ${id} actualizado correctamente`);
+        res.send(`Usuario con id ${id_usuario} actualizado correctamente`);
     });
 });
 
 module.exports.agregar = app.post('/', (req, res) => {
-    const { nombre } = req.body;
+    const { id_usuario,rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono} = req.body;
     const sql = `
-    INSERT INTO Usuarios (ID_Usuario, nombre, apellido) VALUES (1, "Rodrigo", "Lopez")
+    INSERT INTO Usuarios 
+        (id_Usuario,
+        rut_usuario,
+        primer_nombre,
+        segundo_nombre, 
+        apellido_paterno, 
+        apellido_materno,
+        fecha_nacimiento,
+        correo_electronico,
+        esta_subscrito,
+        direccion,
+        telefono) VALUES 
+        (?,?,?,?,?,?,?,?,?,?,?)
     `;
-    const values = [nombre, 1];
+    const values = [id_usuario,rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono];
 
     connection.query(sql, values, (error, results) => {
         if (error) throw error;
-        res.status(200).send('Usuario agregado exitosamente');
+        res.status(200).send('Usuario ${id_usuario} agregado exitosamente');
     });
 });
 
 module.exports.eliminar = app.put('/', (request, response) => {
-    const { id } = request.body;
+    const { id_usuario,rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono } = request.body;
     const sql = `
     UPDATE Usuarios 
-    SET ID_usuario = 0 , nombre = 0 , apellido = 0
-    WHERE ID_usuario = 2`;
-    connection.query(sql, id, (error, results) => {
+    SET  
+        rut_usuario = ? , 
+        primer_nombre = ?,
+        segundo_nombre = ?,
+        apellido_paterno = ?, 
+        apellido_materno = ?, 
+        fecha_nacimiento = ?,
+        correo_electronico = ?,
+        esta_subscrito = ?,
+        direccion = ?,
+        telefono = ?
+    WHERE id_usuario = ?`;
+    connection.query(sql, [rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono,id_usuario], (error, results) => {
       if (error) throw error;
       if (results.affectedRows > 0) {
-        response.status(200).send(`Usuario con id ${id} eliminado correctamente`);
+        response.status(200).send(`Usuario con id ${id_usuario} eliminado correctamente`);
       } else {
-        response.status(404).send(`Usuario con id ${id} no encontrado`);
+        response.status(404).send(`Usuario con id ${id_usuario} no encontrado`);
       }
     });
 });

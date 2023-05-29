@@ -7,9 +7,8 @@ const app = express();
 module.exports.buscar_todo = app.get('/', (request, response) => {  
     const sql = `
     SELECT 
-        ID_donacion, monto
+        id_donacion, fecha, monto
     FROM Donaciones 
-    WHERE ID_donacion = 1
     `;
     connection.query(sql, (error, results) => {
         if (error) throw error;
@@ -22,25 +21,29 @@ module.exports.buscar_todo = app.get('/', (request, response) => {
 });
 
 module.exports.actualizar = app.patch('/', (req, res) => {
-    const { id, nombre } = req.body;
+    const { id_donacion,fecha,monto } = req.body;
     const sql = `
     UPDATE Donaciones 
-    SET ID_donacion = '1' ,monto = '0'
-    WHERE ID_donacion = 3`;
-    const values = [nombre, id];
+    SET 
+        fecha = ?, 
+        monto = ?
+    WHERE id_donacion = ?`;
+    const values = [fecha,monto, id_donacion];
 
     connection.query(sql, values, (error, results) => {
         if (error) throw error;
-        res.send(`Donacion con id ${id} actualizado correctamente`);
+        res.send(`Donacion con id ${id_donacion} actualizado correctamente`);
     });
 });
 
 module.exports.agregar = app.post('/', (req, res) => {
-    const { nombre } = req.body;
+    const { id_donacion,fecha,monto } = req.body;
     const sql = 
-    "INSERT INTO Donaciones (ID_donacion, monto) VALUES (1, 40000)";
+    `INSERT INTO Donaciones 
+    (id_donacion,fecha,monto) 
+    VALUES (?,?,?)`;
     ;
-    const values = [nombre, 1];
+    const values = [id_donacion, fecha,monto];
 
     connection.query(sql, values, (error, results) => {
         if (error) throw error;
@@ -49,17 +52,20 @@ module.exports.agregar = app.post('/', (req, res) => {
 });
 
 module.exports.eliminar = app.put('/', (request, response) => {
-    const { id } = request.body;
+    const { id_donacion,fecha,monto } = request.body;
     const sql = `
     UPDATE Donaciones 
-    SET ID_donacion = 1, monto = 0 
-    WHERE ID_donacion = 3`;
-    connection.query(sql, id, (error, results) => {
+    SET 
+        id_donacion = ?,
+        fecha = ?, 
+        monto = ?
+    WHERE id_donacion = ?`;
+    connection.query(sql, [id_donacion,fecha,monto,id_donacion], (error, results) => {
       if (error) throw error;
       if (results.affectedRows > 0) {
-        response.status(200).send(`Donacion con id ${id} eliminado correctamente`);
+        response.status(200).send(`Donacion con id ${id_donacion} eliminado correctamente`);
       } else {
-        response.status(404).send(`Donacion con id ${id} no encontrado`);
+        response.status(404).send(`Donacion con id ${id_donacion} no encontrado`);
       }
     });
 });
