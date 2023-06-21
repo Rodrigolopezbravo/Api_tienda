@@ -34,23 +34,49 @@ app.listen(port, function (){
 const roles = require('./controllers/roles');
 const usuarios = require('./controllers/usuarios');
 const donaciones = require('./controllers/donaciones');
+const productos = require('./controllers/productos');
+const categorias = require('./controllers/categorias');
+const promociones = require('./controllers/promociones');
+
+
+
 //metodos
 function controladores() {
     // rutas
-    //Funcion de consultar roles
-    app.use('/api/roles/', roles.agregar);
-	app.use('/api/roles/', roles.buscar_todo);
+
+    app.use('/api/roles/', roles.buscar_todo);
+    app.use('/api/roles/', roles.buscar);
     app.use('/api/roles/', roles.actualizar);
+    app.use('/api/roles/', roles.agregar);
     app.use('/api/roles/', roles.eliminar);
 
-    app.use('/api/usuarios/', usuarios.agregar);
     app.use('/api/usuarios/', usuarios.buscar_todo);
+    app.use('/api/usuarios/', usuarios.buscar);
     app.use('/api/usuarios/', usuarios.actualizar);
+    app.use('/api/usuarios/', usuarios.agregar);
     app.use('/api/usuarios/', usuarios.eliminar);
 
-    app.use('/api/donaciones/', donaciones.agregar);
+    app.use('/api/productos/', productos.buscar_todo);
+    app.use('/api/productos/', productos.buscar);
+    app.use('/api/productos/', productos.actualizar);
+    app.use('/api/productos/', productos.agregar);
+    app.use('/api/productos/', productos.eliminar);
+
     app.use('/api/donaciones/', donaciones.buscar_todo);
+    app.use('/api/donaciones/', donaciones.buscar);
     app.use('/api/donaciones/', donaciones.actualizar);
+    app.use('/api/donaciones/', donaciones.agregar);
     app.use('/api/donaciones/', donaciones.eliminar);
     
+    app.use('/api/categorias/', categorias.buscar_todo);
+    app.use('/api/categorias/', categorias.buscar);
+    app.use('/api/categorias/', categorias.actualizar);
+    app.use('/api/categorias/', categorias.agregar);
+    app.use('/api/categorias/', categorias.eliminar);
+
+    app.use('/api/promociones/', promociones.buscar_todo);
+    app.use('/api/promociones/', promociones.buscar);
+    app.use('/api/promociones/', promociones.actualizar);
+    app.use('/api/promociones/', promociones.agregar);
+    app.use('/api/promociones/', promociones.eliminar);
 }

@@ -3,7 +3,6 @@ const express = require('express');
 const connection = require('../config/config');
 const app = express();
 
-
 module.exports.buscar_todo = app.get('/', (request, response) => {  
     const sql = `
     SELECT 
@@ -29,6 +28,34 @@ module.exports.buscar_todo = app.get('/', (request, response) => {
         }
     })               
 });
+
+module.exports.buscar = app.get('/:id', (request, response) => {
+    const id_rol = request.params.id;
+    const sql = `
+      SELECT
+        id_usuario,
+        rut_usuario,
+        primer_nombre, 
+        segundo_nombre, 
+        apellido_paterno, 
+        apellido_materno,
+        fecha_nacimiento,
+        correo_electronico,
+        esta_subscrito,
+        direccion,
+        telefono
+    FROM Usuarios
+    WHERE id_usuario = ?
+    `;
+    connection.query(sql, id_usuario, (error, results) => {
+      if (error) throw error;
+      if (results.length > 0) {
+        response.status(200).send(results[0]);
+      } else {
+        response.status(204).send('Sin resultado');
+      }
+    });
+  });
 
 module.exports.actualizar = app.patch('/', (req, res) => {
     const { id_usuario,rut_usuario , primer_nombre, segundo_nombre, apellido_paterno, apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono } = req.body;
@@ -79,28 +106,16 @@ module.exports.agregar = app.post('/', (req, res) => {
     });
 });
 
-module.exports.eliminar = app.put('/', (request, response) => {
-    const { id_usuario,rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono } = request.body;
-    const sql = `
-    UPDATE Usuarios 
-    SET  
-        rut_usuario = ? , 
-        primer_nombre = ?,
-        segundo_nombre = ?,
-        apellido_paterno = ?, 
-        apellido_materno = ?, 
-        fecha_nacimiento = ?,
-        correo_electronico = ?,
-        esta_subscrito = ?,
-        direccion = ?,
-        telefono = ?
-    WHERE id_usuario = ?`;
-    connection.query(sql, [rut_usuario,primer_nombre,segundo_nombre,apellido_paterno,apellido_materno,fecha_nacimiento,correo_electronico,esta_subscrito,direccion,telefono,id_usuario], (error, results) => {
+module.exports.eliminar = app.delete('/:id', (request, response) => {
+    const id_usuario = request.params.id;
+  
+    const sql = "DELETE FROM Usuarios WHERE id_usuario = ?";
+    connection.query(sql, id_rol, (error, results) => {
       if (error) throw error;
       if (results.affectedRows > 0) {
-        response.status(200).send(`Usuario con id ${id_usuario} eliminado correctamente`);
+        response.status(200).send(`Rol con id ${id_usuario} eliminado correctamente`);
       } else {
-        response.status(404).send(`Usuario con id ${id_usuario} no encontrado`);
+        response.status(404).send(`Rol con id ${id_usuario} no encontrado`);
       }
     });
-});
+  });

@@ -3,60 +3,110 @@ const express = require('express');
 const connection = require('../config/config');
 const app = express();
 
-//http://estilow3b.com/metodos-http-post-get-put-delete/
-
-module.exports.buscar_todo = app.get('/', (request, response) => {  
-    const sql = `
-    SELECT 
-        id_rol, 
-        nombre 
-    FROM Roles`;
-    connection.query(sql, (error, results) => {
-        if (error) throw error;
-        if (results.length > 0) {
-            response.status(200).send(results);
-        } else {
-            response.status(204).send('Sin resultado');
-        }
-    })               
+module.exports.buscar_todo = app.get('/', (request, response) => {
+  const sql = `
+    SELECT
+      id_rol,
+      nombre,
+      estado
+    FROM Roles
+  `;
+  connection.query(sql, (error, results) => {
+    if (error) throw error;
+    if (results.length > 0) {
+      response.status(200).send(results);
+    } else {
+      response.status(204).send('Sin resultado');
+    }
+  });
 });
 
-module.exports.actualizar = app.patch('/', (req, res) => {
-    const { nombre, id_rol} = req.body;
-    const sql = 
-    `UPDATE Roles
-        SET 
-            nombre = ? 
-        WHERE id_rol = ?`;
-    const values = [nombre, id_rol];
-
-    connection.query(sql, values, (error, results) => {
-        if (error) throw error;
-        res.send(`Rol con id ${id_rol} actualizado correctamente`);
-    });
+module.exports.buscar = app.get('/:id', (request, response) => {
+  const id_rol = request.params.id;
+  const sql = `
+    SELECT
+        id_rol,
+        nombre,
+        estado  
+    FROM Roles
+    WHERE id_rol = ?
+  `;
+  connection.query(sql, id_rol, (error, results) => {
+    if (error) throw error;
+    if (results.length > 0) {
+      response.status(200).send(results[0]);
+    } else {
+      response.status(204).send('Sin resultado');
+    }
+  });
 });
 
-//metodo post roles
-module.exports.agregar = app.post('/', (req, res) => {
-    const { id_rol, nombre } = req.body;
-    const sql = "INSERT INTO Roles (id_rol, nombre) VALUES (?,?)";
-    const values = [id_rol, nombre];
-    connection.query(sql, values, (error, results) => {
-         if (error) res.status(404).send(`ID ${id_rol} ya existe`);
-        res.status(200).send('Rol agregado exitosamente');
-    });
 
+module.exports.actualizar = app.patch('/', (request, response) => {
+  const {
+    id_rol,
+    nombre,
+    estado
+  } = request.body;
+
+  const sql = `
+    UPDATE Roles
+    SET       
+        nombre = ?,
+        estado = ?
+    WHERE id_rol = ?
+  `;
+
+  const values = [
+    nombre,
+    estado,
+    id_rol
+  ];
+
+  connection.query(sql, values, (error, results) => {
+    if (error) throw error;
+    response.send(`Categoria con id ${id_rol} actualizado correctamente`);
+  });
 });
 
-module.exports.eliminar = app.put('/', (request, response) => {
-    const { id_rol, nombre } = request.body;
-    const sql = "UPDATE Roles SET nombre = ? WHERE id_rol = ?";
-    connection.query(sql, [nombre,id_rol], (error, results) => {
-      if (error) response.status(404).send(`Rol con id ${id_rol} tuvo un problema`);
-      if (results.affectedRows > 0) {
-        response.status(200).send(`Rol con id ${id_rol} eliminado correctamente`);
-      } else {
-        response.status(200).send(`Rol con id ${id_rol} no encontrado`);
-      }
-    });
+module.exports.agregar = app.post('/', (request, response) => {
+  const {
+    id_rol,
+    nombre,
+    estado
+  } = request.body;
+
+  const sql = `
+    INSERT INTO Roles (      
+        id_rol,
+        nombre,
+        estado)
+    VALUES (?, ?, ?)
+  `;
+
+  const values = [
+    id_rol,
+    nombre,
+    estado
+  ];
+
+  connection.query(sql, values, (error, results) => {
+    if (error) throw error;
+    response.status(200).send(`Rol registrado correctamente con id ${results.insertId}`);
+  });
+});
+
+module.exports.eliminar = app.delete('/:id', (request, response) => {
+  const id_rol = request.params.id;
+
+  const sql = "DELETE FROM Roles WHERE id_rol = ?";
+  connection.query(sql, id_rol, (error, results) => {
+    if (error) throw error;
+    if (results.affectedRows > 0) {
+      response.status(200).send(`Rol con id ${id_rol} eliminado correctamente`);
+    } else {
+      response.status(404).send(`Rol con id ${id_rol} no encontrado`);
+    }
+  });
+
 });
