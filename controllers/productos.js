@@ -65,7 +65,6 @@ module.exports.actualizar = app.patch('/', (request, response) => {
 
   const sql = `
     UPDATE Productos
-<<<<<<< HEAD
     SET       
         nombre_producto = ?,
         valor = ?,
@@ -96,11 +95,12 @@ module.exports.actualizar = app.patch('/', (request, response) => {
 
 module.exports.agregar = app.post('/', (request, response) => {
   const {
+    id_producto,
     nombre_producto,
     valor,
     stock,
-    especies_id_especie,
-    promociones_id_promocion,
+    Especies_id_especie,
+    Promociones_id_promocion,
     Categorias_id_categoria,
     estado
   } = request.body;
@@ -123,8 +123,8 @@ module.exports.agregar = app.post('/', (request, response) => {
     nombre_producto,
     valor,
     stock,
-    especies_id_especie,
-    promociones_id_promocion,
+    Especies_id_especie,
+    Promociones_id_promocion,
     Categorias_id_categoria,
     estado
   ];
@@ -134,6 +134,7 @@ module.exports.agregar = app.post('/', (request, response) => {
     response.status(200).send(`Producto registrado correctamente con id ${results.insertId}`);
   });
 });
+
 
 module.exports.eliminar = app.delete('/:id', (request, response) => {
   const id_producto = request.params.id;

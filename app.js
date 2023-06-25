@@ -37,6 +37,7 @@ const donaciones = require('./controllers/donaciones');
 const productos = require('./controllers/productos');
 const categorias = require('./controllers/categorias');
 const promociones = require('./controllers/promociones');
+const especies = require('./controllers/especies')
 
 
 
@@ -79,4 +80,10 @@ function controladores() {
     app.use('/api/promociones/', promociones.actualizar);
     app.use('/api/promociones/', promociones.agregar);
     app.use('/api/promociones/', promociones.eliminar);
+
+    app.use('/api/especies/', especies.buscar_todo);
+    app.use('/api/especies/', especies.buscar);
+    app.use('/api/especies/', especies.actualizar);
+    app.use('/api/especies/', especies.agregar);
+    app.use('/api/especies/', especies.eliminar);
 }
